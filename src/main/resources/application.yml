@@ -1,0 +1,40 @@
+user:
+  kafka:
+    store: institution-user-state-store
+
+institution:
+  kafka:
+    server: localhost:9092
+    topic: institution
+    replicas: 1
+    partitions: 3
+    store: institution-state-store
+    retention: -1
+    acks: all
+    retries: 10
+    requestimeout: 5000
+    batch: 163850
+    linger: 100
+    max-in-flight: 1
+    client-id: apollo-institution
+    group-id: apollo-institution-group
+    offset: latest
+
+spring:
+  kafka:
+    producer.properties.spring.json.trusted.packages: "*"
+    consumer.properties.spring.json.trusted.packages: "*"
+  cloud:
+    stream:
+      kafka:
+        streams:
+          binder:
+            application-id: apollo-institution
+      function:
+        definition: institutionStateProcessor;
+        bindings:
+          institutionStateProcessor-in-0.destination: institution
+          institutionStateProcessor-out-0.destination: institution-state
+server:
+  port: 8082
+
