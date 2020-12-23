@@ -83,7 +83,7 @@ public class KafkaConfiguration {
     }
 
     @Bean
-    KafkaReceiver courseKafkaReceiver() {
+    KafkaReceiver chatKafkaReceiver() {
         final Properties institutionProperties = new Properties();
         institutionProperties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG , this.bootstrapServer);
         institutionProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG , StringDeserializer.class);
