@@ -2,6 +2,8 @@ package com.apollo.institution.service.impl;
 
 import com.apollo.institution.kafka.KafkaService;
 import com.apollo.institution.model.Institution;
+import com.apollo.institution.model.InstitutionCourse;
+import com.apollo.institution.model.InstitutionUser;
 import com.apollo.institution.service.InstitutionService;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
@@ -9,6 +11,7 @@ import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.stream.binder.kafka.streams.InteractiveQueryService;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Optional;
@@ -37,6 +40,19 @@ public class InstitutionServiceImpl implements InstitutionService {
     public Mono<Institution> createInstitution(Mono<Institution> institutionMono) {
         return this.kafkaService.sendInstitutionRecord(institutionMono).map(Optional::get);
     }
+
+    @Override
+    public Mono<Boolean> addCourse(Mono<InstitutionCourse> institutionCourseMono) {
+        //TODO
+        return null;
+    }
+
+    @Override
+    public Mono<Boolean> addMembers(Flux<InstitutionUser> institutionUserFlux) {
+        //TODO
+        return null;
+    }
+
 
     @Override
     public Mono<Institution> updateInstitution(Mono<Institution> institutionMono , String adminId) {
