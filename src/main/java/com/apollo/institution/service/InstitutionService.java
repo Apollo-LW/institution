@@ -16,5 +16,6 @@ public interface InstitutionService {
     Mono<Institution> createInstitution(Mono<Institution> institutionMono);
     Mono<Institution> updateInstitution(Mono<Institution> institutionMono , String adminId);
     Mono<Institution> deleteInstitution(Mono<Institution> institutionMono , String adminId);
-
+    Mono<Boolean> endorseCourse(Mono<InstitutionCourse> institutionCourseMono , String adminId);
+    Mono<Boolean> joinCourse(Mono<InstitutionCourse> institutionCourseMono , String adminIdA , String adminIdB);
 }

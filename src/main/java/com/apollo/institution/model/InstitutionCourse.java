@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class InstitutionCourse {
 
-    private String institutionId , courseId , adminId;
+    private String institutionId , joinInstitutionId , courseId , courseName;
 
 }
