@@ -29,7 +29,7 @@ public class InstitutionController {
 
     @PutMapping("/endorse/{adminId}")
     public Mono<Boolean> endorseCourse(@RequestBody Mono<InstitutionCourse> institutionCourseMono , @PathVariable("adminId") String adminId) {
-        return this.institutionService.endorseCourse(institutionCourseMono , adminId);
+        return this.institutionService.addCourse(institutionCourseMono , adminId);
     }
 
     @PutMapping("/join/{adminIdA}/{adminIdB}")

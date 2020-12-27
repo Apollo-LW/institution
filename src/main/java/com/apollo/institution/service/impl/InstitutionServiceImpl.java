@@ -86,27 +86,16 @@ public class InstitutionServiceImpl implements InstitutionService {
     }
 
     @Override
-    public Mono<Boolean> endorseCourse(Mono<InstitutionCourse> institutionCourseMono , String adminId) {
-        return institutionCourseMono.flatMap(institutionCourse -> {
-            Optional<Institution> optionalInstitution = Optional.ofNullable(this.getInstitutionStateStore().get(institutionCourse.getInstitutionId()));
-            if (this.isNotValid(optionalInstitution , adminId)) return Mono.just(false);
-            Institution institution = optionalInstitution.get().addCourseById(institutionCourse.getCourseId());
-            return this.kafkaService.sendInstitutionRecord(Mono.just(institution)).map(Optional::isPresent);
-        });
-    }
-
-    @Override
     public Mono<Boolean> joinCourse(Mono<InstitutionCourse> institutionCourseMono , String adminIdA , String adminIdB) {
         return institutionCourseMono.flatMap(institutionCourse -> {
             Optional<Institution> optionalInstitutionA = Optional.ofNullable(this.getInstitutionStateStore().get(institutionCourse.getInstitutionId()));
             if (this.isNotValid(optionalInstitutionA , adminIdA)) return Mono.just(false);
             Optional<Institution> optionalInstitutionB = Optional.ofNullable(this.getInstitutionStateStore().get(institutionCourse.getJoinInstitutionId()));
             if (this.isNotValid(optionalInstitutionB , adminIdB)) return Mono.just(false);
-            Institution institutionA = optionalInstitutionA.get() , institutionB = optionalInstitutionB.get();
             return this.kafkaService
-                    .sendInstitutionRecord(Mono.just(institutionA.addCourseById(institutionCourse.getCourseId()))).map(Optional::isPresent)
+                    .sendInstitutionRecord(Mono.just(optionalInstitutionA.get().addCourseById(institutionCourse.getCourseId()))).map(Optional::isPresent)
                     .flatMap(result -> this.kafkaService
-                            .sendInstitutionRecord(Mono.just(institutionB.addCourseById(institutionCourse.getCourseId())))
+                            .sendInstitutionRecord(Mono.just(optionalInstitutionB.get().addCourseById(institutionCourse.getCourseId())))
                             .map(optionalInstitution -> result && optionalInstitution.isPresent()));
         });
     }
