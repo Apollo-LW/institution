@@ -24,7 +24,7 @@ public class InstitutionController {
 
     @PostMapping("/")
     public Mono<Institution> createInstitution(@RequestBody Mono<Institution> institutionMono) {
-        return this.institutionService.createInstitution(institutionMono);
+        return this.institutionService.createInstitution(institutionMono).flatMap(Mono::justOrEmpty);
     }
 
     @PutMapping("/share/{adminId}")
@@ -39,12 +39,12 @@ public class InstitutionController {
 
     @PutMapping("/{adminId}")
     public Mono<Institution> updateInstitution(@PathVariable("adminId") String adminId , @RequestBody Mono<Institution> institutionMono) {
-        return this.institutionService.updateInstitution(institutionMono , adminId);
+        return this.institutionService.updateInstitution(institutionMono , adminId).flatMap(Mono::justOrEmpty);
     }
 
     @DeleteMapping("/{adminId}")
-    public Mono<Institution> deleteInstitution(@PathVariable("adminId") String adminId , @RequestBody Mono<Institution> institutionMono) {
-        return this.institutionService.deleteInstitution(institutionMono , adminId);
+    public Mono<Boolean> deleteInstitution(@PathVariable("adminId") String adminId , @RequestBody Mono<Institution> institutionMono) {
+        return this.institutionService.deleteInstitution(institutionMono , adminId).flatMap(Mono::justOrEmpty);
     }
 
 }
