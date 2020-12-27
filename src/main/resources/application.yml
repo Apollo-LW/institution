@@ -7,7 +7,7 @@ institution:
     server: localhost:9092
     topic: institution
     replicas: 1
-    partitions: 3
+    partitions: 1
     store: institution-state-store
     retention: -1
     acks: all
