@@ -27,7 +27,7 @@ public class InstitutionController {
         return this.institutionService.createInstitution(institutionMono).flatMap(Mono::justOrEmpty);
     }
 
-    @PutMapping("/share/{adminId}")
+    @PutMapping("/endorse/{adminId}")
     public Mono<Boolean> endorseCourse(@RequestBody Mono<InstitutionCourse> institutionCourseMono , @PathVariable("adminId") String adminId) {
         return this.institutionService.endorseCourse(institutionCourseMono , adminId);
     }

@@ -90,8 +90,8 @@ public class InstitutionServiceImpl implements InstitutionService {
         return institutionCourseMono.flatMap(institutionCourse -> {
             Optional<Institution> optionalInstitution = Optional.ofNullable(this.getInstitutionStateStore().get(institutionCourse.getInstitutionId()));
             if (this.isNotValid(optionalInstitution , adminId)) return Mono.just(false);
-            Institution institution = optionalInstitution.get();
-            return this.kafkaService.sendInstitutionRecord(Mono.just(institution.addCourseById(institutionCourse.getCourseId()))).map(Optional::isPresent);
+            Institution institution = optionalInstitution.get().addCourseById(institutionCourse.getCourseId());
+            return this.kafkaService.sendInstitutionRecord(Mono.just(institution)).map(Optional::isPresent);
         });
     }
 
