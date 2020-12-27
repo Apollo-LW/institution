@@ -2,7 +2,6 @@ package com.apollo.institution.kafka;
 
 import com.apollo.institution.model.Institution;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.apachecommons.CommonsLog;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -13,7 +12,6 @@ import reactor.kafka.sender.SenderRecord;
 import java.util.Optional;
 
 @Service
-@CommonsLog
 @RequiredArgsConstructor
 public class KafkaService {
 
@@ -23,11 +21,9 @@ public class KafkaService {
 
     public Mono<Optional<Institution>> sendInstitutionRecord(Mono<Institution> institutionMono) {
         return institutionMono.flatMap(institution -> this.institutionKafkaSender
-                .send(Mono.just(SenderRecord.create(new ProducerRecord<>(this.institutionTopicName , institution.getInstitutionId() , institution) , 1)))
+                .send(Mono.just(SenderRecord.create(new ProducerRecord<>(this.institutionTopicName , institution.getInstitutionId() , institution) , institution.getInstitutionId())))
                 .next()
-                .doOnNext(log::info)
-                .doOnError(log::error)
-                .map(integerSenderResult -> integerSenderResult.exception() == null ? Optional.of(institution) : Optional.empty()));
+                .map(senderResult -> senderResult.exception() == null ? Optional.of(institution) : Optional.empty()));
     }
 
 }
