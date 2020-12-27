@@ -21,12 +21,17 @@ public class InstitutionProcessor {
     private String institutionUserStateStoreName;
 
     @Bean
-    public Function<KStream<String , Institution> , KTable<String , Institution>> institutionStateProcessor() {
+    public Function<KStream<String, Institution>, KTable<String, Institution>> institutionStateProcessor() {
         return institutionKStream -> {
             institutionKStream
-                    .flatMap((institutionId , institution) -> institution.getInstitutionMembers().stream().map(memberId -> new KeyValue<String , Institution>(memberId , institution)).collect(Collectors.toSet()))
+                    .flatMap((institutionId , institution) -> institution
+                            .getInstitutionMembers()
+                            .stream()
+                            .map(memberId -> new KeyValue<String, Institution>(memberId , institution)).collect(Collectors.toSet()))
                     .groupByKey(Grouped.with(Serdes.String() , CustomSerdes.institutionSerdes()))
-                    .aggregate(InstitutionUser::new , (key , value , aggregate) -> aggregate.addInstitution(value) , Materialized.with(Serdes.String() , CustomSerdes.institutionUserSerde()))
+                    .aggregate(InstitutionUser::new
+                            , (institutionId , institution , institutionUser) -> institutionUser
+                                    .addInstitution(institution) , Materialized.with(Serdes.String() , CustomSerdes.institutionUserSerde()))
                     .toStream()
                     .groupByKey()
                     .reduce((institutionUser , updatedInstitutionUser) -> updatedInstitutionUser , Materialized.as(this.institutionUserStateStoreName));
