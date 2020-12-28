@@ -2,6 +2,7 @@ package com.apollo.institution.service;
 
 import com.apollo.institution.model.Institution;
 import com.apollo.institution.model.InstitutionCourse;
+import com.apollo.institution.model.InstitutionJoinRequest;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -22,4 +23,6 @@ public interface InstitutionService {
     Mono<Boolean> deleteInstitution(Mono<Institution> institutionMono , String adminId);
 
     Mono<Boolean> joinCourse(Mono<InstitutionCourse> institutionCourseMono , String adminIdA , String adminIdB);
+
+    Mono<Boolean> createJoinRequest(Mono<InstitutionJoinRequest> institutionJoinRequestMono , String adminIdA , String adminIdB);
 }

@@ -5,7 +5,10 @@ import com.apollo.institution.model.InstitutionCourse;
 import com.apollo.institution.service.InstitutionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.Set;
 
 @RestController
 @RequestMapping("/institution")
@@ -30,6 +33,11 @@ public class InstitutionController {
     @PutMapping("/endorse/{adminId}")
     public Mono<Boolean> endorseCourse(@RequestBody Mono<InstitutionCourse> institutionCourseMono , @PathVariable("adminId") String adminId) {
         return this.institutionService.addCourse(institutionCourseMono , adminId);
+    }
+
+    @PutMapping("/add/members/{institutionId}/{adminId}")
+    public Mono<Boolean> addMembers(@PathVariable("institutionId") String institutionId , @PathVariable("adminId") String adminId , @RequestBody Set<String> membersIds) {
+        return this.institutionService.addMembers(Flux.fromIterable(membersIds) , institutionId , adminId);
     }
 
     @PutMapping("/join/{adminIdA}/{adminIdB}")

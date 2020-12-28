@@ -3,6 +3,7 @@ package com.apollo.institution.service.impl;
 import com.apollo.institution.kafka.KafkaService;
 import com.apollo.institution.model.Institution;
 import com.apollo.institution.model.InstitutionCourse;
+import com.apollo.institution.model.InstitutionJoinRequest;
 import com.apollo.institution.service.InstitutionService;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
@@ -98,6 +99,12 @@ public class InstitutionServiceImpl implements InstitutionService {
                             .sendInstitutionRecord(Mono.just(optionalInstitutionB.get().addCourseById(institutionCourse.getCourseId())))
                             .map(optionalInstitution -> result && optionalInstitution.isPresent()));
         });
+    }
+
+    @Override
+    public Mono<Boolean> createJoinRequest(Mono<InstitutionJoinRequest> institutionJoinRequestMono , String adminIdA , String adminIdB) {
+        //TODO: create requests as well as create a way to send requests to kafka and processes them
+        return null;
     }
 
     @Override
