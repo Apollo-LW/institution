@@ -75,14 +75,12 @@ public class InstitutionServiceImpl implements InstitutionService {
     }
 
     @Override
-    public Mono<Boolean> deleteInstitution(Mono<Institution> institutionMono , String adminId) {
-        return institutionMono.flatMap(institution -> {
-            Optional<Institution> optionalInstitution = Optional.ofNullable(this.getInstitutionStateStore().get(institution.getInstitutionId()));
-            if (this.isNotValid(optionalInstitution , adminId)) return Mono.empty();
-            Institution deletedInstitution = optionalInstitution.get();
-            deletedInstitution.setIsActive(false);
-            return this.kafkaService.sendInstitutionRecord(Mono.just(deletedInstitution)).map(Optional::isPresent);
-        });
+    public Mono<Boolean> deleteInstitution(String adminId , String institutionId) {
+        Optional<Institution> optionalInstitution = Optional.ofNullable(this.getInstitutionStateStore().get(institutionId));
+        if(this.isNotValid(optionalInstitution , adminId)) return Mono.just(false);
+        Institution institution = optionalInstitution.get();
+        institution.setIsActive(false);
+        return this.kafkaService.sendInstitutionRecord(Mono.just(institution)).map(Optional::isPresent);
     }
 
     @Override

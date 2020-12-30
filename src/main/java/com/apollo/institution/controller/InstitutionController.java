@@ -42,9 +42,9 @@ public class InstitutionController {
         return this.institutionService.updateInstitution(institutionMono , adminId).flatMap(Mono::justOrEmpty);
     }
 
-    @DeleteMapping("/{adminId}")
-    public Mono<Boolean> deleteInstitution(@PathVariable("adminId") String adminId , @RequestBody Mono<Institution> institutionMono) {
-        return this.institutionService.deleteInstitution(institutionMono , adminId).flatMap(Mono::justOrEmpty);
+    @DeleteMapping("/{adminId}/{institutionId}")
+    public Mono<Boolean> deleteInstitution(@PathVariable("adminId") String adminId , @PathVariable("institutionId") String institutionId) {
+        return this.institutionService.deleteInstitution(adminId , institutionId).flatMap(Mono::justOrEmpty);
     }
 
 }

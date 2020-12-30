@@ -19,7 +19,7 @@ public interface InstitutionService {
 
     Mono<Optional<Institution>> updateInstitution(Mono<Institution> institutionMono , String adminId);
 
-    Mono<Boolean> deleteInstitution(Mono<Institution> institutionMono , String adminId);
+    Mono<Boolean> deleteInstitution(String adminId , String institutionId);
 
     Mono<Boolean> joinCourse(Mono<InstitutionCourse> institutionCourseMono , String adminIdA , String adminIdB);
 }
