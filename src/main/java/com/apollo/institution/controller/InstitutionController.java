@@ -19,10 +19,7 @@ public class InstitutionController {
 
     @GetMapping("/{institutionId}")
     public Mono<Institution> getInstitutionById(@PathVariable("institutionId") String institutionId) {
-        return this.institutionService.getInstitutionById(institutionId).flatMap(optionalInstitution -> {
-            if (optionalInstitution.isEmpty()) return Mono.empty();
-            return Mono.just(optionalInstitution.get());
-        });
+        return this.institutionService.getInstitutionById(institutionId).flatMap(Mono::justOrEmpty);
     }
 
     @PostMapping("/")
@@ -36,12 +33,12 @@ public class InstitutionController {
     }
 
     @PutMapping("/add/member/{adminId}/{institutionId}")
-    public Mono<Boolean> addMembers(@PathVariable("adminId") String adminId , @PathVariable("institutionId") String institutionId , List<String> membersToAdd) {
+    public Mono<Boolean> addMembers(@PathVariable("adminId") String adminId , @PathVariable("institutionId") String institutionId , @RequestBody List<String> membersToAdd) {
         return this.institutionService.addMembers(adminId , institutionId , Flux.fromIterable(membersToAdd));
     }
 
-    @PutMapping("/add/owner/{adminId}/{institutionId}")
-    public Mono<Boolean> addAdmins(@PathVariable("adminId") String adminId , @PathVariable("institutionId") String institutionId , List<String> adminsToAdd) {
+    @PutMapping("/add/admin/{adminId}/{institutionId}")
+    public Mono<Boolean> addAdmins(@PathVariable("adminId") String adminId , @PathVariable("institutionId") String institutionId , @RequestBody List<String> adminsToAdd) {
         return this.institutionService.addAdmins(adminId , institutionId , Flux.fromIterable(adminsToAdd));
     }
 

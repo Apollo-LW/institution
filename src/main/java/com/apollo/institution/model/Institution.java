@@ -2,10 +2,7 @@ package com.apollo.institution.model;
 
 import lombok.Data;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.UUID;
+import java.util.*;
 
 @Data
 public class Institution {
@@ -35,4 +32,16 @@ public class Institution {
         return this;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Institution that = (Institution) o;
+        return institutionId.equals(that.institutionId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(institutionId);
+    }
 }
