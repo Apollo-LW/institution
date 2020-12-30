@@ -30,4 +30,9 @@ public class Institution {
         return this;
     }
 
+    public Institution addAdmin(String ownerId) {
+        this.institutionAdmins.add(ownerId);
+        return this;
+    }
+
 }
