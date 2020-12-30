@@ -2,6 +2,7 @@ package com.apollo.institution.service.impl;
 
 import com.apollo.institution.model.Institution;
 import com.apollo.institution.model.InstitutionUser;
+import com.apollo.institution.service.InstitutionService;
 import com.apollo.institution.service.InstitutionUserService;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
@@ -19,6 +20,7 @@ public class InstitutionUserServiceImpl implements InstitutionUserService {
 
     @Value("${user.kafka.store}")
     private String institutionUserStateStoreName;
+    private final InstitutionService institutionService;
     private final InteractiveQueryService interactiveQueryService;
     private ReadOnlyKeyValueStore<String , InstitutionUser> institutionUserStateStore;
 
@@ -29,9 +31,9 @@ public class InstitutionUserServiceImpl implements InstitutionUserService {
     }
 
     @Override
-    public Flux<Institution> getUserInstitutions(String userId) {
+    public Flux<Optional<Institution>> getUserInstitutions(String userId) {
         Optional<InstitutionUser> optionalInstitutionUser = Optional.ofNullable(this.getInstitutionUserStateStore().get(userId));
         if(optionalInstitutionUser.isEmpty()) return Flux.empty();
-        return Flux.fromIterable(optionalInstitutionUser.get().getUserInstitutions());
+        return Flux.fromIterable(optionalInstitutionUser.get().getUserInstitutions()).flatMap(this.institutionService::getInstitutionById);
     }
 }
