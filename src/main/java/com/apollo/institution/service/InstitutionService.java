@@ -9,7 +9,9 @@ import java.util.Optional;
 
 public interface InstitutionService {
 
-    Mono<Boolean> addMembers(Flux<String> membersIds , String institutionId , String adminId);
+    Mono<Boolean> addMembers(String adminId , String institutionId , Flux<String> membersIds);
+
+    Mono<Boolean> addAdmins(String adminId , String institutionId , Flux<String> ownerIds);
 
     Mono<Boolean> addCourse(Mono<InstitutionCourse> institutionCourseMono , String adminId);
 
@@ -17,9 +19,7 @@ public interface InstitutionService {
 
     Mono<Optional<Institution>> createInstitution(Mono<Institution> institutionMono);
 
-    Mono<Optional<Institution>> updateInstitution(Mono<Institution> institutionMono , String adminId);
+    Mono<Boolean> updateInstitution(String adminId , Mono<Institution> institutionMono);
 
-    Mono<Boolean> deleteInstitution(Mono<Institution> institutionMono , String adminId);
-
-    Mono<Boolean> joinCourse(Mono<InstitutionCourse> institutionCourseMono , String adminIdA , String adminIdB);
+    Mono<Boolean> deleteInstitution(String adminId , String institutionId);
 }
