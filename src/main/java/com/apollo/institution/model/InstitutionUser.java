@@ -8,10 +8,10 @@ import java.util.HashSet;
 public class InstitutionUser {
 
     private String userId;
-    private HashSet<Institution> userInstitutions = new HashSet<>();
+    private HashSet<String> userInstitutions = new HashSet<>();
 
-    public InstitutionUser addInstitution(Institution institution) {
-        this.userInstitutions.add(institution);
+    public InstitutionUser addInstitution(String institutionId) {
+        this.userInstitutions.add(institutionId);
         return this;
     }
 

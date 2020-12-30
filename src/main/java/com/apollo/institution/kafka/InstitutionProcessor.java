@@ -30,8 +30,8 @@ public class InstitutionProcessor {
                             .map(memberId -> new KeyValue<String, Institution>(memberId , institution)).collect(Collectors.toSet()))
                     .groupByKey(Grouped.with(Serdes.String() , CustomSerdes.institutionSerdes()))
                     .aggregate(InstitutionUser::new
-                            , (institutionId , institution , institutionUser) -> institutionUser
-                                    .addInstitution(institution) , Materialized.with(Serdes.String() , CustomSerdes.institutionUserSerde()))
+                            , (uerId , institution , institutionUser) -> institutionUser
+                                    .addInstitution(institution.getInstitutionId()) , Materialized.with(Serdes.String() , CustomSerdes.institutionUserSerde()))
                     .toStream()
                     .groupByKey()
                     .reduce((institutionUser , updatedInstitutionUser) -> updatedInstitutionUser , Materialized.as(this.institutionUserStateStoreName));

@@ -18,7 +18,7 @@ public class InstitutionUserController {
 
     @GetMapping("/{userId}")
     public Flux<Institution> getUserInstitution(@PathVariable("userId") String userId) {
-        return this.institutionUserService.getUserInstitutions(userId);
+        return this.institutionUserService.getUserInstitutions(userId).flatMap(optionalInstitution -> optionalInstitution.map(Flux::just).orElseGet(Flux::empty));
     }
 
 }
