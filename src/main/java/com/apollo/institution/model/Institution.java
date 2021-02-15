@@ -20,14 +20,12 @@ public class Institution {
         return this;
     }
 
-    public Institution addMember(String memberId) {
-        this.institutionMembers.add(memberId);
-        return this;
+    public Boolean addMembers(Set<String> membersIds) {
+        return this.institutionMembers.addAll(membersIds);
     }
 
-    public Institution addAdmin(String ownerId) {
-        this.institutionAdmins.add(ownerId);
-        return this;
+    public Boolean addAdmins(Set<String> adminsIds) {
+        return this.institutionAdmins.addAll(adminsIds);
     }
 
     public Set<String> getAllInstitutionMembers() {
