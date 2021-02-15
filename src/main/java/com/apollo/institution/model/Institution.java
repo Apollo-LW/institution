@@ -9,11 +9,11 @@ public class Institution {
 
     private Boolean isActive = true, isPublic = false;
     private HashSet<String> institutionCourse = new HashSet<>();
-    private HashSet<String> institutionAdmins = new HashSet<>() , institutionParents = new HashSet<>();
-    private HashSet<String> institutionMembers = new HashSet<>() , institutionChildren = new HashSet<>();
+    private HashSet<String> institutionAdmins = new HashSet<>(), institutionParents = new HashSet<>();
+    private HashSet<String> institutionMembers = new HashSet<>(), institutionChildren = new HashSet<>();
     private final String institutionId = UUID.randomUUID().toString();
     private final Date institutionDateOfCreation = Calendar.getInstance().getTime();
-    private String institutionName = this.institutionId + '-' + this.institutionDateOfCreation , institutionRoomId;
+    private String institutionName = this.institutionId + '-' + this.institutionDateOfCreation, institutionRoomId;
 
     public Institution addCourseById(String courseId) {
         this.institutionCourse.add(courseId);
@@ -28,6 +28,13 @@ public class Institution {
     public Institution addAdmin(String ownerId) {
         this.institutionAdmins.add(ownerId);
         return this;
+    }
+
+    public Set<String> getAllInstitutionMembers() {
+        HashSet<String> allInstitutionMembers = new HashSet<>();
+        allInstitutionMembers.addAll(this.institutionMembers);
+        allInstitutionMembers.addAll(this.institutionAdmins);
+        return allInstitutionMembers;
     }
 
     @Override
