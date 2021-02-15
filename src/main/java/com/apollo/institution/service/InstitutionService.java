@@ -2,16 +2,16 @@ package com.apollo.institution.service;
 
 import com.apollo.institution.model.Institution;
 import com.apollo.institution.model.InstitutionCourse;
-import reactor.core.publisher.Flux;
+import com.apollo.institution.model.ModifyInstitution;
 import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 
 public interface InstitutionService {
 
-    Mono<Boolean> addMembers(String adminId , String institutionId , Flux<String> membersIds);
+    Mono<Boolean> addMembers(Mono<ModifyInstitution> modifyInstitutionMono);
 
-    Mono<Boolean> addAdmins(String adminId , String institutionId , Flux<String> ownerIds);
+    Mono<Boolean> addAdmins(Mono<ModifyInstitution> modifyInstitutionMono);
 
     Mono<Boolean> addCourse(Mono<InstitutionCourse> institutionCourseMono , String adminId);
 
@@ -21,5 +21,5 @@ public interface InstitutionService {
 
     Mono<Boolean> updateInstitution(String adminId , Mono<Institution> institutionMono);
 
-    Mono<Boolean> deleteInstitution(String adminId , String institutionId);
+    Mono<Boolean> deleteInstitution(Mono<ModifyInstitution> modifyInstitutionMono);
 }
