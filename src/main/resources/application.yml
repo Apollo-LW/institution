@@ -21,20 +21,23 @@ institution:
     offset: latest
 
 spring:
-  kafka:
-    producer.properties.spring.json.trusted.packages: "*"
-    consumer.properties.spring.json.trusted.packages: "*"
   cloud:
+    function:
+      definition: institutionProcessorState;userInstitutionProcessorState
     stream:
       kafka:
         streams:
           binder:
-            application-id: apollo-institution
-      function:
-        definition: institutionStateProcessor;
-        bindings:
-          institutionStateProcessor-in-0.destination: institution
-          institutionStateProcessor-out-0.destination: institution-state
+            functions:
+              institutionProcessorState:
+                application-id: apollo-instituion
+              userInstitutionProcessorState:
+                application-id: apollo-user-institution
+      bindings:
+        institutionProcessorState-in-0.destination: ${institution.kafka.topic}
+        institutionProcessorState-out-0.destination: ${institution.kafka.store}
+        userInstitutionProcessorState-in-0.destination: ${institution.kafka.topic}
+        userInstitutionProcessorState-out-0.destination: ${user.kafka.store}
 server:
   port: 8082
 
