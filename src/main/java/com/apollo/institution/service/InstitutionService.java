@@ -9,17 +9,17 @@ import java.util.Optional;
 
 public interface InstitutionService {
 
-    Mono<Boolean> addMembers(Mono<ModifyInstitution> modifyInstitutionMono);
+    Mono<Boolean> addMembers(final Mono<ModifyInstitution> modifyInstitutionMono);
 
-    Mono<Boolean> addAdmins(Mono<ModifyInstitution> modifyInstitutionMono);
+    Mono<Boolean> addAdmins(final Mono<ModifyInstitution> modifyInstitutionMono);
 
-    Mono<Boolean> addCourse(Mono<InstitutionCourse> institutionCourseMono , String adminId);
+    Mono<Boolean> addCourse(final Mono<InstitutionCourse> institutionCourseMono , String adminId);
 
-    Mono<Optional<Institution>> getInstitutionById(String institutionId);
+    Mono<Optional<Institution>> getInstitutionById(final String institutionId);
 
-    Mono<Optional<Institution>> createInstitution(Mono<Institution> institutionMono);
+    Mono<Optional<Institution>> createInstitution(final Mono<Institution> institutionMono);
 
-    Mono<Boolean> updateInstitution(String adminId , Mono<Institution> institutionMono);
+    Mono<Boolean> updateInstitution(final Mono<Institution> institutionMono , final String adminId);
 
-    Mono<Boolean> deleteInstitution(Mono<ModifyInstitution> modifyInstitutionMono);
+    Mono<Boolean> deleteInstitution(final Mono<ModifyInstitution> modifyInstitutionMono);
 }

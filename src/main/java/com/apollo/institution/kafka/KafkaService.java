@@ -19,7 +19,7 @@ public class KafkaService {
     private String institutionTopicName;
     private final KafkaSender<String , Institution> institutionKafkaSender;
 
-    public Mono<Optional<Institution>> sendInstitutionRecord(Mono<Institution> institutionMono) {
+    public Mono<Optional<Institution>> sendInstitutionRecord(final Mono<Institution> institutionMono) {
         return institutionMono.flatMap(institution -> this.institutionKafkaSender
                 .send(Mono.just(SenderRecord.create(new ProducerRecord<>(this.institutionTopicName , institution.getInstitutionId() , institution) , institution.getInstitutionId())))
                 .next()

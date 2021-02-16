@@ -35,6 +35,10 @@ public class Institution {
         return allInstitutionMembers;
     }
 
+    public Boolean doesNotHaveAdmin(String adminId) {
+        return !this.institutionAdmins.contains(adminId);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
