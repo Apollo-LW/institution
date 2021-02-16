@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface InstitutionUserService {
 
-    Flux<Optional<Institution>> getUserInstitutions(String userId);
+    Flux<Optional<Institution>> getUserInstitutions(final String userId);
 }

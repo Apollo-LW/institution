@@ -31,62 +31,62 @@ public class InstitutionServiceImpl implements InstitutionService {
         return this.institutionStateStore;
     }
 
-    private boolean isNotValid(Optional<Institution> institution , String adminId) {
-        return institution.isEmpty() || !institution.get().getIsActive() || !institution.get().getInstitutionAdmins().contains(adminId);
+    private boolean isNotValid(final Optional<Institution> institution , final String adminId) {
+        return institution.isEmpty() || !institution.get().getIsActive() || institution.get().doesNotHaveAdmin(adminId);
     }
 
     @Override
-    public Mono<Optional<Institution>> createInstitution(Mono<Institution> institutionMono) {
+    public Mono<Optional<Institution>> createInstitution(final Mono<Institution> institutionMono) {
         return this.kafkaService.sendInstitutionRecord(institutionMono);
     }
 
     @Override
-    public Mono<Boolean> addCourse(Mono<InstitutionCourse> institutionCourseMono , String adminId) {
-        return institutionCourseMono.flatMap(institutionCourse -> {
-            Optional<Institution> optionalInstitution = Optional.ofNullable(this.getInstitutionStateStore().get(institutionCourse.getInstitutionId()));
-            if (this.isNotValid(optionalInstitution , adminId)) return Mono.just(false);
-            return this.kafkaService.sendInstitutionRecord(Mono.just(optionalInstitution.get().addCourseById(institutionCourse.getCourseId()))).map(Optional::isPresent);
-        });
-    }
-
-    @Override
-    public Mono<Boolean> addMembers(Mono<ModifyInstitution> modifyInstitutionMono) {
-        return modifyInstitutionMono.flatMap(modifyInstitution ->
-                this.getInstitutionById(modifyInstitution.getInstitutionId()).flatMap(optionalInstitution -> {
-                    if (this.isNotValid(optionalInstitution , modifyInstitution.getAdminId())) return Mono.just(false);
-                    final Institution institution = optionalInstitution.get();
-                    institution.addMembers(modifyInstitution.getUserIds());
-                    return this.kafkaService.sendInstitutionRecord(Mono.just(institution)).map(Optional::isPresent);
-                }));
-    }
-
-    @Override
-    public Mono<Boolean> addAdmins(Mono<ModifyInstitution> modifyInstitutionMono) {
-        return modifyInstitutionMono.flatMap(modifyInstitution ->
-                this.getInstitutionById(modifyInstitution.getInstitutionId()).flatMap(optionalInstitution -> {
-                    if (this.isNotValid(optionalInstitution , modifyInstitution.getAdminId())) return Mono.just(false);
-                    final Institution institution = optionalInstitution.get();
-                    institution.addAdmins(modifyInstitution.getUserIds());
-                    return this.kafkaService.sendInstitutionRecord(Mono.just(institution)).map(Optional::isPresent);
-                }));
-    }
-
-
-    @Override
-    public Mono<Boolean> updateInstitution(String adminId , Mono<Institution> institutionMono) {
-        return institutionMono.flatMap(updatedInstitution -> {
-            Optional<Institution> optionalInstitution = Optional.ofNullable(this.getInstitutionStateStore().get(updatedInstitution.getInstitutionId()));
-            if (this.isNotValid(optionalInstitution , adminId)) return Mono.just(false);
-            Institution institution = optionalInstitution.get();
-            institution.setInstitutionName(updatedInstitution.getInstitutionName());
-            institution.setIsPublic(updatedInstitution.getIsPublic());
-            institution.setIsActive(updatedInstitution.getIsActive());
+    public Mono<Boolean> addCourse(final Mono<InstitutionCourse> institutionCourseMono , final String adminId) {
+        return institutionCourseMono.flatMap(institutionCourse -> this.getInstitutionById(institutionCourse.getInstitutionId()).flatMap(institutionOptional -> {
+            if (this.isNotValid(institutionOptional , adminId)) return Mono.just(false);
+            final Institution institution = institutionOptional.get();
+            institution.addCourseById(institutionCourse.getCourseId());
             return this.kafkaService.sendInstitutionRecord(Mono.just(institution)).map(Optional::isPresent);
-        });
+        }));
     }
 
     @Override
-    public Mono<Boolean> deleteInstitution(Mono<ModifyInstitution> modifyInstitutionMono) {
+    public Mono<Boolean> addMembers(final Mono<ModifyInstitution> modifyInstitutionMono) {
+        return modifyInstitutionMono.flatMap(modifyInstitution ->
+                this.getInstitutionById(modifyInstitution.getInstitutionId()).flatMap(optionalInstitution -> {
+                    if (this.isNotValid(optionalInstitution , modifyInstitution.getAdminId())) return Mono.just(false);
+                    final Institution institution = optionalInstitution.get();
+                    Boolean isAdded = institution.addMembers(modifyInstitution.getUserIds());
+                    return this.kafkaService.sendInstitutionRecord(Mono.just(institution)).map(updatedInstitutionOptional -> updatedInstitutionOptional.isPresent() && isAdded);
+                }));
+    }
+
+    @Override
+    public Mono<Boolean> addAdmins(final Mono<ModifyInstitution> modifyInstitutionMono) {
+        return modifyInstitutionMono.flatMap(modifyInstitution ->
+                this.getInstitutionById(modifyInstitution.getInstitutionId()).flatMap(optionalInstitution -> {
+                    if (this.isNotValid(optionalInstitution , modifyInstitution.getAdminId())) return Mono.just(false);
+                    final Institution institution = optionalInstitution.get();
+                    Boolean isAdded = institution.addAdmins(modifyInstitution.getUserIds());
+                    return this.kafkaService.sendInstitutionRecord(Mono.just(institution)).map(updatedInstitutionOptional -> updatedInstitutionOptional.isPresent() && isAdded);
+                }));
+    }
+
+
+    @Override
+    public Mono<Boolean> updateInstitution(final Mono<Institution> institutionMono , final String adminId) {
+        return institutionMono.flatMap(institution -> this.getInstitutionById(institution.getInstitutionId()).flatMap(institutionOptional -> {
+            if (this.isNotValid(institutionOptional , adminId)) return Mono.just(false);
+            Institution updatedInstitution = institutionOptional.get();
+            updatedInstitution.setInstitutionName(institution.getInstitutionName());
+            updatedInstitution.setIsPublic(institution.getIsPublic());
+            updatedInstitution.setIsActive(institution.getIsActive());
+            return this.kafkaService.sendInstitutionRecord(Mono.just(updatedInstitution)).map(Optional::isPresent);
+        }));
+    }
+
+    @Override
+    public Mono<Boolean> deleteInstitution(final Mono<ModifyInstitution> modifyInstitutionMono) {
         return modifyInstitutionMono.flatMap(modifyInstitution ->
                 this.getInstitutionById(modifyInstitution.getInstitutionId()).flatMap(optionalInstitution -> {
                     if (this.isNotValid(optionalInstitution , modifyInstitution.getAdminId())) return Mono.just(false);
@@ -97,7 +97,10 @@ public class InstitutionServiceImpl implements InstitutionService {
     }
 
     @Override
-    public Mono<Optional<Institution>> getInstitutionById(String institutionId) {
-        return Mono.just(Optional.ofNullable(this.getInstitutionStateStore().get(institutionId)));
+    public Mono<Optional<Institution>> getInstitutionById(final String institutionId) {
+        final Optional<Institution> institutionOptional = Optional.ofNullable(this.getInstitutionStateStore().get(institutionId));
+        if (institutionOptional.isPresent() && !institutionOptional.get().getIsActive())
+            return Mono.just(Optional.empty());
+        return Mono.just(institutionOptional);
     }
 }

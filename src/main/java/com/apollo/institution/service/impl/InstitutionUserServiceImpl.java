@@ -22,18 +22,18 @@ public class InstitutionUserServiceImpl implements InstitutionUserService {
     private String institutionUserStateStoreName;
     private final InstitutionService institutionService;
     private final InteractiveQueryService interactiveQueryService;
-    private ReadOnlyKeyValueStore<String , InstitutionUser> institutionUserStateStore;
+    private ReadOnlyKeyValueStore<String, InstitutionUser> institutionUserStateStore;
 
-    private ReadOnlyKeyValueStore<String , InstitutionUser> getInstitutionUserStateStore() {
-        if(this.institutionUserStateStore == null)
+    private ReadOnlyKeyValueStore<String, InstitutionUser> getInstitutionUserStateStore() {
+        if (this.institutionUserStateStore == null)
             this.institutionUserStateStore = this.interactiveQueryService.getQueryableStore(this.institutionUserStateStoreName , QueryableStoreTypes.keyValueStore());
         return this.institutionUserStateStore;
     }
 
     @Override
-    public Flux<Optional<Institution>> getUserInstitutions(String userId) {
+    public Flux<Optional<Institution>> getUserInstitutions(final String userId) {
         Optional<InstitutionUser> optionalInstitutionUser = Optional.ofNullable(this.getInstitutionUserStateStore().get(userId));
-        if(optionalInstitutionUser.isEmpty()) return Flux.empty();
+        if (optionalInstitutionUser.isEmpty()) return Flux.empty();
         return Flux.fromIterable(optionalInstitutionUser.get().getUserInstitutions()).flatMap(this.institutionService::getInstitutionById);
     }
 }
