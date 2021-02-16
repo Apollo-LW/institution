@@ -14,7 +14,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 public class InstitutionRouterConfig {
 
     @Bean
-    public RouterFunction<ServerResponse> routeInstitution(InstitutionHandler institutionHandler) {
+    public RouterFunction<ServerResponse> routeInstitution(final InstitutionHandler institutionHandler) {
         return RouterFunctions
                 .route()
                 .path(RoutingConstant.INSTITUTION_PATH , routeFunctionBuilder ->

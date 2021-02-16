@@ -19,7 +19,7 @@ public class InstitutionUserHandler {
 
     private final InstitutionUserService institutionUserService;
 
-    public @NotNull Mono<ServerResponse> getUserInstitution(ServerRequest request) {
+    public @NotNull Mono<ServerResponse> getUserInstitution(final ServerRequest request) {
         final String userId = request.pathVariable(RoutingConstant.USER_ID);
         final Flux<Institution> institutionFlux = this.institutionUserService.getUserInstitutions(userId).flatMap(optionalInstitution -> optionalInstitution.map(Flux::just).orElseGet(Flux::empty));
         return ServerResponse

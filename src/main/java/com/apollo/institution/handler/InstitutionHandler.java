@@ -20,7 +20,7 @@ public class InstitutionHandler {
 
     private final InstitutionService institutionService;
 
-    public @NotNull Mono<ServerResponse> getInstitutionById(ServerRequest request) {
+    public @NotNull Mono<ServerResponse> getInstitutionById(final ServerRequest request) {
         final String institutionId = request.pathVariable(RoutingConstant.INSTITUTION_ID);
         final Mono<Institution> institutionMono = this.institutionService.getInstitutionById(institutionId).flatMap(Mono::justOrEmpty);
         return ServerResponse
@@ -29,7 +29,7 @@ public class InstitutionHandler {
                 .body(institutionMono , Institution.class);
     }
 
-    public @NotNull Mono<ServerResponse> createInstitution(ServerRequest request) {
+    public @NotNull Mono<ServerResponse> createInstitution(final ServerRequest request) {
         final Mono<Institution> institutionMono = request.bodyToMono(Institution.class);
         final Mono<Institution> createdInstitutionMono = this.institutionService.createInstitution(institutionMono).flatMap(Mono::justOrEmpty);
         return ServerResponse
@@ -37,7 +37,7 @@ public class InstitutionHandler {
                 .body(createdInstitutionMono , Institution.class);
     }
 
-    public @NotNull Mono<ServerResponse> endorseCourse(ServerRequest request) {
+    public @NotNull Mono<ServerResponse> endorseCourse(final ServerRequest request) {
         final Mono<InstitutionCourse> institutionCourseMono = request.bodyToMono(InstitutionCourse.class);
         final String adminId = request.pathVariable(RoutingConstant.ADMIN_ID);
         final Mono<Boolean> isCourseEndorsed = this.institutionService.addCourse(institutionCourseMono , adminId);
@@ -47,7 +47,7 @@ public class InstitutionHandler {
                 .body(isCourseEndorsed , Boolean.class);
     }
 
-    public @NotNull Mono<ServerResponse> addMembers(ServerRequest request) {
+    public @NotNull Mono<ServerResponse> addMembers(final ServerRequest request) {
         final Mono<ModifyInstitution> modifyInstitutionMono = request.bodyToMono(ModifyInstitution.class);
         final Mono<Boolean> isMembersAdded = this.institutionService.addMembers(modifyInstitutionMono);
         return ServerResponse
@@ -56,7 +56,7 @@ public class InstitutionHandler {
                 .body(isMembersAdded , Boolean.class);
     }
 
-    public @NotNull Mono<ServerResponse> addAdmins(ServerRequest request) {
+    public @NotNull Mono<ServerResponse> addAdmins(final ServerRequest request) {
         final Mono<ModifyInstitution> modifyInstitutionMono = request.bodyToMono(ModifyInstitution.class);
         final Mono<Boolean> isAdminsAdded = this.institutionService.addAdmins(modifyInstitutionMono);
         return ServerResponse
@@ -65,17 +65,17 @@ public class InstitutionHandler {
                 .body(isAdminsAdded , Boolean.class);
     }
 
-    public @NotNull Mono<ServerResponse> updateInstitution(ServerRequest request) {
+    public @NotNull Mono<ServerResponse> updateInstitution(final ServerRequest request) {
         final String adminId = request.pathVariable(RoutingConstant.ADMIN_ID);
         final Mono<Institution> institutionMono = request.bodyToMono(Institution.class);
-        final Mono<Boolean> isInstitutionUpdated = this.institutionService.updateInstitution(adminId , institutionMono);
+        final Mono<Boolean> isInstitutionUpdated = this.institutionService.updateInstitution(institutionMono , adminId);
         return ServerResponse
                 .ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(isInstitutionUpdated , Boolean.class);
     }
 
-    public @NotNull Mono<ServerResponse> deleteInstitution(ServerRequest request) {
+    public @NotNull Mono<ServerResponse> deleteInstitution(final ServerRequest request) {
         final Mono<ModifyInstitution> modifyInstitutionMono = request.bodyToMono(ModifyInstitution.class);
         final Mono<Boolean> isInstitutionDeleted = this.institutionService.deleteInstitution(modifyInstitutionMono);
         return ServerResponse
