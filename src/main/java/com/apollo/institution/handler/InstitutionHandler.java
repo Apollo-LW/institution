@@ -14,19 +14,32 @@ import reactor.core.publisher.Mono;
 
 import javax.validation.constraints.NotNull;
 
+/**
+ * Main Institution handler for the Institution API
+ */
 @Component
 @RequiredArgsConstructor
 public class InstitutionHandler {
 
+    /**
+     * Institution Service that handle API operations from the event side
+     */
     private final InstitutionService institutionService;
 
+    /**
+     * @param request
+     *
+     * @return
+     */
     public @NotNull Mono<ServerResponse> getInstitutionById(final ServerRequest request) {
         final String institutionId = request.pathVariable(RoutingConstant.INSTITUTION_ID);
         final Mono<Institution> institutionMono = this.institutionService.getInstitutionById(institutionId).flatMap(Mono::justOrEmpty);
         return ServerResponse
                 .ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(institutionMono , Institution.class);
+                .body(institutionMono , Institution.class)
+                .switchIfEmpty(ServerResponse.notFound().build())
+                .doOnError(throwable -> ServerResponse.badRequest().build());
     }
 
     public @NotNull Mono<ServerResponse> createInstitution(final ServerRequest request) {
@@ -34,7 +47,9 @@ public class InstitutionHandler {
         final Mono<Institution> createdInstitutionMono = this.institutionService.createInstitution(institutionMono).flatMap(Mono::justOrEmpty);
         return ServerResponse
                 .ok()
-                .body(createdInstitutionMono , Institution.class);
+                .body(createdInstitutionMono , Institution.class)
+                .switchIfEmpty(ServerResponse.unprocessableEntity().build())
+                .doOnError(throwable -> ServerResponse.badRequest().build());
     }
 
     public @NotNull Mono<ServerResponse> endorseCourse(final ServerRequest request) {
@@ -44,7 +59,9 @@ public class InstitutionHandler {
         return ServerResponse
                 .ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(isCourseEndorsed , Boolean.class);
+                .body(isCourseEndorsed , Boolean.class)
+                .switchIfEmpty(ServerResponse.badRequest().build())
+                .doOnError(throwable -> ServerResponse.unprocessableEntity().build());
     }
 
     public @NotNull Mono<ServerResponse> addMembers(final ServerRequest request) {
@@ -53,7 +70,9 @@ public class InstitutionHandler {
         return ServerResponse
                 .ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(isMembersAdded , Boolean.class);
+                .body(isMembersAdded , Boolean.class)
+                .switchIfEmpty(ServerResponse.badRequest().build())
+                .doOnError(throwable -> ServerResponse.unprocessableEntity().build());
     }
 
     public @NotNull Mono<ServerResponse> addAdmins(final ServerRequest request) {
@@ -62,7 +81,9 @@ public class InstitutionHandler {
         return ServerResponse
                 .ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(isAdminsAdded , Boolean.class);
+                .body(isAdminsAdded , Boolean.class)
+                .switchIfEmpty(ServerResponse.badRequest().build())
+                .doOnError(throwable -> ServerResponse.unprocessableEntity().build());
     }
 
     public @NotNull Mono<ServerResponse> updateInstitution(final ServerRequest request) {
@@ -72,7 +93,9 @@ public class InstitutionHandler {
         return ServerResponse
                 .ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(isInstitutionUpdated , Boolean.class);
+                .body(isInstitutionUpdated , Boolean.class)
+                .switchIfEmpty(ServerResponse.notFound().build())
+                .doOnError(throwable -> ServerResponse.badRequest().build());
     }
 
     public @NotNull Mono<ServerResponse> deleteInstitution(final ServerRequest request) {
@@ -81,7 +104,9 @@ public class InstitutionHandler {
         return ServerResponse
                 .ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(isInstitutionDeleted , Boolean.class);
+                .body(isInstitutionDeleted , Boolean.class)
+                .switchIfEmpty(ServerResponse.notFound().build())
+                .doOnError(throwable -> ServerResponse.badRequest().build());
     }
 
 }
