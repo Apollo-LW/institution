@@ -1,5 +1,6 @@
 package com.apollo.institution.service.impl;
 
+import com.apollo.institution.constant.ErrorConstant;
 import com.apollo.institution.model.Institution;
 import com.apollo.institution.model.InstitutionUser;
 import com.apollo.institution.service.InstitutionService;
@@ -32,6 +33,11 @@ public class InstitutionUserServiceImpl implements InstitutionUserService {
 
     @Override
     public Flux<Optional<Institution>> getUserInstitutions(final String userId) {
+        if (userId == null)
+            return Flux.error(new NullPointerException(ErrorConstant.USER_ID_NULL));
+        if (userId.length() == 0)
+            return Flux.error(new IllegalArgumentException(ErrorConstant.USER_ID_EMPTY));
+
         Optional<InstitutionUser> optionalInstitutionUser = Optional.ofNullable(this.getInstitutionUserStateStore().get(userId));
         if (optionalInstitutionUser.isEmpty()) return Flux.empty();
         return Flux.fromIterable(optionalInstitutionUser.get().getUserInstitutions()).flatMap(this.institutionService::getInstitutionById);

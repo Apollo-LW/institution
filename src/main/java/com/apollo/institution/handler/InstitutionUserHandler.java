@@ -25,7 +25,8 @@ public class InstitutionUserHandler {
         return ServerResponse
                 .ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(institutionFlux , Institution.class);
+                .body(institutionFlux , Institution.class)
+                .doOnError(throwable -> ServerResponse.badRequest().build());
     }
 
 }

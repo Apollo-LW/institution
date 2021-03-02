@@ -1,5 +1,6 @@
 package com.apollo.institution.service.impl;
 
+import com.apollo.institution.constant.ErrorConstant;
 import com.apollo.institution.kafka.KafkaService;
 import com.apollo.institution.model.Institution;
 import com.apollo.institution.model.InstitutionCourse;
@@ -42,6 +43,11 @@ public class InstitutionServiceImpl implements InstitutionService {
 
     @Override
     public Mono<Boolean> addCourse(final Mono<InstitutionCourse> institutionCourseMono , final String adminId) {
+        if (adminId == null)
+            return Mono.error(new NullPointerException(ErrorConstant.ADMIN_ID_NULL));
+        if (adminId.length() == 0)
+            return Mono.error(new IllegalArgumentException(ErrorConstant.ADMIN_ID_EMPTY));
+
         return institutionCourseMono.flatMap(institutionCourse -> this.getInstitutionById(institutionCourse.getInstitutionId()).flatMap(institutionOptional -> {
             if (this.isNotValid(institutionOptional , adminId)) return Mono.just(false);
             final Institution institution = institutionOptional.get();
@@ -75,6 +81,11 @@ public class InstitutionServiceImpl implements InstitutionService {
 
     @Override
     public Mono<Boolean> updateInstitution(final Mono<Institution> institutionMono , final String adminId) {
+        if (adminId == null)
+            return Mono.error(new NullPointerException(ErrorConstant.ADMIN_ID_NULL));
+        if (adminId.length() == 0)
+            return Mono.error(new IllegalArgumentException(ErrorConstant.ADMIN_ID_EMPTY));
+
         return institutionMono.flatMap(institution -> this.getInstitutionById(institution.getInstitutionId()).flatMap(institutionOptional -> {
             if (this.isNotValid(institutionOptional , adminId)) return Mono.just(false);
             Institution updatedInstitution = institutionOptional.get();
@@ -98,6 +109,11 @@ public class InstitutionServiceImpl implements InstitutionService {
 
     @Override
     public Mono<Optional<Institution>> getInstitutionById(final String institutionId) {
+        if (institutionId == null)
+            return Mono.error(new NullPointerException(ErrorConstant.INSTITUTION_ID_NULL));
+        if (institutionId.length() == 0)
+            return Mono.error(new IllegalArgumentException(ErrorConstant.INSTITUTION_ID_EMPTY));
+
         final Optional<Institution> institutionOptional = Optional.ofNullable(this.getInstitutionStateStore().get(institutionId));
         if (institutionOptional.isPresent() && !institutionOptional.get().getIsActive())
             return Mono.just(Optional.empty());
